@@ -487,6 +487,188 @@
             font-weight: bold;
         }
 
+        .signature-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #0284c7;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .signature-section h4 {
+            font-size: 14px;
+            color: #0c4a6e;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .decision-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .decision-btn {
+            padding: 15px 40px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 200px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-accept {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-accept:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-refuse {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            color: white;
+        }
+
+        .btn-refuse:hover {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .signature-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .signature-form.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 11px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .confirmation-message {
+            display: none;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .confirmation-message.accepted {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        .confirmation-message.refused {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .confirm-action-btn {
+            margin-top: 15px;
+            padding: 10px 30px;
+            background: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .confirm-action-btn:hover {
+            background: #0369a1;
+            transform: translateY(-1px);
+        }
+
+        .signature-timestamp {
+            margin-top: 10px;
+            font-size: 9px;
+            color: #6b7280;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .signature-section.signed .decision-buttons {
+            display: none;
+        }
+
+        .signature-section.signed .signature-form {
+            display: none !important;
+        }
+
         .footer {
             margin-top: 30px;
             text-align: center;
@@ -533,6 +715,18 @@
             .table td:nth-child(5) {
                 display: none !important;
             }
+            
+            .signature-section:not(.signed) {
+                display: none !important;
+            }
+            
+            .decision-buttons {
+                display: none !important;
+            }
+            
+            .signature-form {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -549,6 +743,7 @@
             <button class="control-btn" onclick="window.print()">🖨️ Imprimer</button>
             <button class="control-btn" onclick="APP.exportPDF()">📄 Exporter PDF</button>
             <button class="control-btn" onclick="APP.resetDefaults()">🔄 Valeurs par défaut</button>
+            <button class="control-btn" onclick="APP.resetDecision()" title="Permet de resigner la soumission">🔓 Réinitialiser signature</button>
         </div>
         <div class="settings-row">
             <label>
@@ -1065,6 +1260,57 @@
             </ul>
         </div>
 
+        <!-- Section Signature Client -->
+        <div class="signature-section" id="signatureSection">
+            <h4>📝 DÉCISION DU CLIENT</h4>
+            
+            <div class="decision-buttons" id="decisionButtons">
+                <button class="decision-btn btn-accept" onclick="APP.showSignatureForm('accept')">
+                    ✅ ACCEPTER LA SOUMISSION
+                </button>
+                <button class="decision-btn btn-refuse" onclick="APP.showSignatureForm('refuse')">
+                    ❌ REFUSER LA SOUMISSION
+                </button>
+            </div>
+
+            <div class="signature-form" id="signatureForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="clientName">Nom complet *</label>
+                        <input type="text" id="clientName" placeholder="Prénom et nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientTitle">Titre/Fonction</label>
+                        <input type="text" id="clientTitle" placeholder="Ex: Propriétaire, Gestionnaire">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="clientEmail">Courriel *</label>
+                        <input type="email" id="clientEmail" placeholder="exemple@domaine.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientPhone">Téléphone</label>
+                        <input type="tel" id="clientPhone" placeholder="(514) 123-4567">
+                    </div>
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="clientComments">Commentaires / Conditions</label>
+                    <textarea id="clientComments" placeholder="Ajoutez vos commentaires, conditions ou demandes de modifications..."></textarea>
+                </div>
+                <div style="text-align: center;">
+                    <button class="confirm-action-btn" id="confirmBtn" onclick="APP.confirmDecision()">
+                        CONFIRMER MA DÉCISION
+                    </button>
+                </div>
+            </div>
+
+            <div class="confirmation-message" id="confirmationMessage">
+                <div id="confirmationText"></div>
+                <div class="signature-timestamp" id="signatureTimestamp"></div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <div class="footer">
             <p><strong>Soumission préparée par :</strong></p>
@@ -1420,6 +1666,237 @@
                 window.print();
             },
 
+            // Gérer la décision du client
+            currentDecision: null,
+            
+            showSignatureForm(decision) {
+                APP.currentDecision = decision;
+                const form = document.getElementById('signatureForm');
+                const confirmBtn = document.getElementById('confirmBtn');
+                
+                form.classList.add('show');
+                
+                // Changer le texte du bouton selon la décision
+                if (decision === 'accept') {
+                    confirmBtn.textContent = '✅ CONFIRMER L\'ACCEPTATION';
+                    confirmBtn.style.background = '#10b981';
+                } else {
+                    confirmBtn.textContent = '❌ CONFIRMER LE REFUS';
+                    confirmBtn.style.background = '#ef4444';
+                }
+                
+                // Scroll vers le formulaire
+                form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            },
+            
+            confirmDecision() {
+                const name = document.getElementById('clientName').value.trim();
+                const email = document.getElementById('clientEmail').value.trim();
+                const title = document.getElementById('clientTitle').value.trim();
+                const phone = document.getElementById('clientPhone').value.trim();
+                const comments = document.getElementById('clientComments').value.trim();
+                
+                // Validation
+                if (!name) {
+                    alert('Veuillez entrer votre nom complet');
+                    document.getElementById('clientName').focus();
+                    return;
+                }
+                
+                if (!email) {
+                    alert('Veuillez entrer votre adresse courriel');
+                    document.getElementById('clientEmail').focus();
+                    return;
+                }
+                
+                // Validation email basique
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert('Veuillez entrer une adresse courriel valide');
+                    document.getElementById('clientEmail').focus();
+                    return;
+                }
+                
+                // Confirmer la décision
+                const confirmMessage = APP.currentDecision === 'accept' 
+                    ? 'Confirmez-vous l\'ACCEPTATION de cette soumission?' 
+                    : 'Confirmez-vous le REFUS de cette soumission?';
+                    
+                if (!confirm(confirmMessage)) {
+                    return;
+                }
+                
+                // Afficher la confirmation
+                const confirmationDiv = document.getElementById('confirmationMessage');
+                const confirmationText = document.getElementById('confirmationText');
+                const timestamp = document.getElementById('signatureTimestamp');
+                const signatureSection = document.getElementById('signatureSection');
+                
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('fr-CA', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                const timeStr = now.toLocaleTimeString('fr-CA', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                if (APP.currentDecision === 'accept') {
+                    confirmationDiv.classList.add('accepted');
+                    confirmationDiv.classList.remove('refused');
+                    confirmationText.innerHTML = `
+                        <strong>✅ SOUMISSION ACCEPTÉE</strong><br>
+                        <div style="margin-top: 10px; font-size: 11px; font-weight: normal;">
+                            Par : <strong>${name}</strong>${title ? ` (${title})` : ''}<br>
+                            Courriel : ${email}${phone ? `<br>Téléphone : ${phone}` : ''}
+                            ${comments ? `<br><br>Commentaires : <em>${comments}</em>` : ''}
+                        </div>
+                    `;
+                } else {
+                    confirmationDiv.classList.add('refused');
+                    confirmationDiv.classList.remove('accepted');
+                    confirmationText.innerHTML = `
+                        <strong>❌ SOUMISSION REFUSÉE</strong><br>
+                        <div style="margin-top: 10px; font-size: 11px; font-weight: normal;">
+                            Par : <strong>${name}</strong>${title ? ` (${title})` : ''}<br>
+                            Courriel : ${email}${phone ? `<br>Téléphone : ${phone}` : ''}
+                            ${comments ? `<br><br>Raison : <em>${comments}</em>` : ''}
+                        </div>
+                    `;
+                }
+                
+                timestamp.textContent = `Décision enregistrée le ${dateStr} à ${timeStr}`;
+                
+                // Afficher la confirmation et masquer le reste
+                confirmationDiv.style.display = 'block';
+                signatureSection.classList.add('signed');
+                
+                // Sauvegarder dans localStorage
+                const signatureData = {
+                    decision: APP.currentDecision,
+                    name: name,
+                    email: email,
+                    title: title,
+                    phone: phone,
+                    comments: comments,
+                    timestamp: now.toISOString(),
+                    soumissionNumber: document.getElementById('numeroSoumission').value
+                };
+                
+                localStorage.setItem('signatureDecision', JSON.stringify(signatureData));
+                
+                // Option pour imprimer
+                setTimeout(() => {
+                    if (confirm('Voulez-vous imprimer la soumission signée?')) {
+                        window.print();
+                    }
+                }, 500);
+            },
+            
+            // Fonction pour vérifier si une décision a déjà été prise
+            checkExistingDecision() {
+                const savedDecision = localStorage.getItem('signatureDecision');
+                if (savedDecision) {
+                    const data = JSON.parse(savedDecision);
+                    const soumissionNumber = document.getElementById('numeroSoumission').value;
+                    
+                    // Vérifier si c'est pour la même soumission
+                    if (data.soumissionNumber === soumissionNumber) {
+                        // Restaurer l'état de décision
+                        APP.currentDecision = data.decision;
+                        
+                        const confirmationDiv = document.getElementById('confirmationMessage');
+                        const confirmationText = document.getElementById('confirmationText');
+                        const timestamp = document.getElementById('signatureTimestamp');
+                        const signatureSection = document.getElementById('signatureSection');
+                        
+                        const savedDate = new Date(data.timestamp);
+                        const dateStr = savedDate.toLocaleDateString('fr-CA', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        });
+                        const timeStr = savedDate.toLocaleTimeString('fr-CA', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        });
+                        
+                        if (data.decision === 'accept') {
+                            confirmationDiv.classList.add('accepted');
+                            confirmationText.innerHTML = `
+                                <strong>✅ SOUMISSION ACCEPTÉE</strong><br>
+                                <div style="margin-top: 10px; font-size: 11px; font-weight: normal;">
+                                    Par : <strong>${data.name}</strong>${data.title ? ` (${data.title})` : ''}<br>
+                                    Courriel : ${data.email}${data.phone ? `<br>Téléphone : ${data.phone}` : ''}
+                                    ${data.comments ? `<br><br>Commentaires : <em>${data.comments}</em>` : ''}
+                                </div>
+                            `;
+                        } else {
+                            confirmationDiv.classList.add('refused');
+                            confirmationText.innerHTML = `
+                                <strong>❌ SOUMISSION REFUSÉE</strong><br>
+                                <div style="margin-top: 10px; font-size: 11px; font-weight: normal;">
+                                    Par : <strong>${data.name}</strong>${data.title ? ` (${data.title})` : ''}<br>
+                                    Courriel : ${data.email}${data.phone ? `<br>Téléphone : ${data.phone}` : ''}
+                                    ${data.comments ? `<br><br>Raison : <em>${data.comments}</em>` : ''}
+                                </div>
+                            `;
+                        }
+                        
+                        timestamp.textContent = `Décision enregistrée le ${dateStr} à ${timeStr}`;
+                        confirmationDiv.style.display = 'block';
+                        signatureSection.classList.add('signed');
+                    }
+                }
+            },
+            
+            // Fonction pour réinitialiser la décision
+            resetDecision() {
+                if (confirm('Voulez-vous réinitialiser la décision et permettre une nouvelle signature?')) {
+                    localStorage.removeItem('signatureDecision');
+                    
+                    const confirmationDiv = document.getElementById('confirmationMessage');
+                    const signatureSection = document.getElementById('signatureSection');
+                    const form = document.getElementById('signatureForm');
+                    
+                    confirmationDiv.style.display = 'none';
+                    confirmationDiv.classList.remove('accepted', 'refused');
+                    signatureSection.classList.remove('signed');
+                    form.classList.remove('show');
+                    
+                    // Réinitialiser les champs
+                    document.getElementById('clientName').value = '';
+                    document.getElementById('clientEmail').value = '';
+                    document.getElementById('clientTitle').value = '';
+                    document.getElementById('clientPhone').value = '';
+                    document.getElementById('clientComments').value = '';
+                    
+                    APP.currentDecision = null;
+                }
+            },
+            
+            // Fonction pour mettre à jour la superficie et les planches
+            updateSuperficie() {
+                const superficie = parseFloat(document.getElementById('superficieDeck').value) || 378;
+                // Trouver la ligne des planches de deck (index 7 = 8ème ligne)
+                const rows = document.querySelectorAll('.section-row');
+                if (rows[7]) { // Planches de deck
+                    const qtyInput = rows[7].querySelector('.qty-input');
+                    if (qtyInput) {
+                        qtyInput.value = superficie;
+                        APP.calculateRow(qtyInput);
+                    }
+                }
+            },
+            
+            // Fonction pour mettre à jour la durée
+            updateDuree() {
+                // Juste pour marquer comme modifié
+                APP.state.isDirty = true;
+            },
+            
             resetDefaults() {
                 if (confirm('Réinitialiser toutes les valeurs par défaut?')) {
                     // Réinitialiser les informations du projet
@@ -1501,6 +1978,9 @@
             
             APP.calculateAll();
             APP.init();
+            
+            // Vérifier si une décision existe déjà
+            APP.checkExistingDecision();
         });
 
         window.APP = APP;
